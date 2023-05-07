@@ -1,0 +1,57 @@
+---
+title: "README"
+output: html_document
+date: "2023-05-02"
+---
+
+# Getting and Cleaning Data Course Project
+
+## Table of Contents:
+
+-   Problem Summary
+
+-   Contents of This Repository
+
+-   Instructions for Data Analysis
+
+-   How the Script Works
+
+### Problem summary
+
+In 2013, Anguita, et al created a public data set of human activity recognition using smartphones. The data is in the form of hiercharical folders of flat text files---hard to look at and understand. This project takes these files, weaves them together, and exports a meaningful, tidy data set in which:
+
+-   Every variable is a column
+
+-   Every observation is a row
+
+-   Every value has its own cell
+
+    (Wickham & Grolemund, "R for Data Science", 2017)
+
+### Contents of this Repository
+
+This repository contains:
+
+1.  A script ("run_analysis.R") that lays out exactly how to take the raw data--stored in the working directory-- and turn it into a tidy data set. It then exports a separate tidy data set with the average of the mean and standard deviation of each measurement by subject and activity
+2.  This README markdown which introduces the problem and outlines how the script works
+3.  A codebook that explains:
+    1.  The base data set and its variables
+    2.  The tidy data sets created within and exported by "run_analysis.R"
+    3.  Why they're tidy
+
+### Instructions for Data Analysis
+
+1.  **To run the script on this data, it is important that the UCI HAR Dataset be unzipped into your computer's working directory, and that you preserve the native hiercharchy of the files**. When you run the script, a text file will be generated, containing the summary tidy data set, which will be saved in the working directory.
+
+2.  **You will also need to install the tidyverse and dplyr packages before running the script. The script only loads the libraries.**
+
+### How the Script Works
+
+Run_analysis.R, broadly, works in the following steps:
+
+1.  Read the files into tables
+2.  Label them with descriptive variable names and change codes to human-readable categories
+3.  Merge the tables from the "test" and "train" folders and select only the mean and standard deviations of each measurement---this is the first tidy data set
+4.  Create a second tidy data set that's a summary of the first---averages of the means and standard deviations by subject and activity
+
+For more detail, see the code book, section "Creating the Tidy Data".

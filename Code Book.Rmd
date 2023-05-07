@@ -1,0 +1,262 @@
+---
+title: "Code Book"
+output: html_document
+date: "2023-05-05"
+---
+
+# Getting and Cleaning Data, Course Project Code Book
+
+## Table of Contents:
+
+1.  Project Design
+
+2.  Study Design
+
+3.  The "Raw" Data Structure
+
+4.  Code Book
+
+    1.  Description of the Variables
+
+        1.  Pre-Processing of the Data
+
+        2.  Variable Name Components
+
+    2.  Creating the Tidy Data Set
+
+    3.  Variables of the Two Tidy Data Sets
+
+        1.  Units
+
+    4.  Why is the Tidy Data Set Tidy?
+
+### Project Description
+
+As described in the README, this project involves sourcing data from multiple files in a hierarchical structure and merging them into a single, clean and tidy data set, displaying the average across time points of 66 variables by subject and activity.
+
+### Study Design
+
+In this study, thirty participants performed six activities (walking, walking upstairs, walking downstairs, sitting, standing, and laying) while wearing a smartphone (Samsung Galaxy S II) strapped to their waist. Tri-axial linear acceleration and tri-axial angular velocity were measured, with the accelerometer and gyroscope respectively, at a frequency of 50 Hz, or 50 times per second.
+
+This data set was randomly distributed into a "test" data set (30% of the subjects) and a "train" data set (70%). The purpose of this practice is to minimize bias in machine learning models. The machine uses the "training" data set to create the model, sometimes a "validation" set to fine-tune the parameters, and then the "test" data set to run the model on an unused set of data. For the sake of this project, however, the instructions were to merge the data sets.
+
+### The "Raw" Data Structure
+
+When the downloaded file is unzipped, the structure is as follows:
+
+1.  UCI HAR Data Set
+
+    1.  Test
+
+        1.  Inertial Signals---raw data for test group
+
+        2.  subject_test---numeric IDs (1:30) of subjects randomly assigned to the test group, one record for each record in X_test
+
+        3.  X_test---test data set
+
+        4.  Y_test---numeric activity codes (1:6) denoting which activities were performed for each record (row) in X_test
+
+    2.  Train
+
+        1.  Inertial Signals---raw data for train group
+
+        2.  subject_train---numeric IDs (1:30) of subjects randomly assigned to the train group, one record for each record in X_train
+
+        3.  X_train---train data set
+
+        4.  Y_train---numeric activity codes (1:6) denoting which activities were performed for each record (row) in X_train
+
+    3.  activity_labels---key for numeric activity codes
+
+    4.  features---list of variables in test and train data sets
+
+    5.  features_info---explanation of the pre-processing that produced the 561 variables
+
+    6.  README--information about the experiment, the data set, the structure, etc.
+
+## Code Book
+
+### Description of the Variables
+
+#### Pre-Processing of the Data---Getting to 561
+
+The linear acceleration and angular velocity were run through noise filters and sampled in overlapping windows. The acceleration was separated into its body motion and gravitational components via a Butterworth low-pass filter, and the gravitational components were further filtered with a 0.3 Hz cutoff. A 561-feature vector of time and frequency domain variables were calculated for each window---these are the variables shown in the "features" text file and are the subject of this project. The raw inertial signals were treated as out of scope.
+
+Below is a diagram explaining how the different variables in the data set were calculated from the raw acceleration and angular velocity.
+
+**Figure 1. Variable Diagram**
+
+![](Slide1.JPG)
+
+Each of these variables (in black boxes---33) were then subject to 17 operations, described below.
+
+#### Variable Name Components
+
+Here is a table of the variable name components in the base data set to explain what each of the variables in the black boxes means, as well as descriptions of the 17 operations performed on each.
+
+**Table 1. Variable Meanings**
+
+| Variable Name Component | Meaning                                                                                                                                                                                         |
+|------------------|------------------------------------------------------|
+| t                       | Denotes time domain                                                                                                                                                                             |
+| f                       | Denotes frequency domain, ie post-Fast Fourier Transform (FFT)                                                                                                                                  |
+| -XYZ                    | In feature_info and in the above diagram, indicates the variable repeats for each axial direction. In table, for example, tBodyAcc-XYZ is separated into tBodyAcc-X, tBodyAcc-Y, and tBodyAcc-Z |
+| BodyAcc                 | Body acceleration--component of the acceleration signal                                                                                                                                         |
+| GravityAcc              | Gravity acceleration--component of the acceleration signal                                                                                                                                      |
+| Jerk                    | Jerk signal--derivative with respect to time (d/dt) of acceleration or angular velocity                                                                                                         |
+| Mag                     | Magnitude--Euclidean norm calculation on an XYZ vector                                                                                                                                          |
+| BodyGyro                | Gyroscope signal--angular velocity (units are radians/second)                                                                                                                                   |
+| mean                    | mean value                                                                                                                                                                                      |
+| std                     | standard deviation                                                                                                                                                                              |
+| mad                     | median absolute deviation                                                                                                                                                                       |
+| max                     | largest value                                                                                                                                                                                   |
+| min                     | smallest value                                                                                                                                                                                  |
+| sma                     | signal magnitude area                                                                                                                                                                           |
+| energy                  | energy measure; sum of the squares divided by the \# of values                                                                                                                                  |
+| iqr                     | interquartile range                                                                                                                                                                             |
+| entropy                 | signal entropy                                                                                                                                                                                  |
+| arCoeff                 | autoregression coefficients with Burg order equal to 4                                                                                                                                          |
+| correlation             | correlation coefficient between two signals                                                                                                                                                     |
+| maxInds                 | index of the frequency component with largest magnitude                                                                                                                                         |
+| meanFreq                | weighted average of the frequency components to obtain a mean frequency                                                                                                                         |
+| skewness                | skewness of the frequency domain signal                                                                                                                                                         |
+| kurtosis                | kurtosis of the frequency domain signal                                                                                                                                                         |
+| bandsEnergy             | energy of a frequency interval within the 64 bins of the FFT of each window                                                                                                                     |
+| angle                   | angle between two vectors                                                                                                                                                                       |
+
+All 561 variables were then normalized and thus bounded between -1 and 1.
+
+This information came from this website: <http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones>
+
+as well as the "features_info.txt" file in the data folder.
+
+### Creating the Tidy Data
+
+As described in the README markdown, the script that details how to create the tidy data set works as follows:
+
+1.  Create a list of the files in each subfolder---"test" and "train"\-\--of the unzipped data set, leaving out the first one. This the folder containing the raw inertial signals, which were out of scope for this project.
+
+2.  Use read_table to read each file list into separate tables, one for each subfolder, "test" and "train".
+
+3.  Read the activity labels and features files from the base data folder into tables as well.
+
+4.  Use the features table to name the variables of the "test" and "train" tables with descriptive names.
+
+5.  Merge the two data sets.
+
+6.  Select only those columns which are means or standard deviations for each measurement. I decided to filter the variables by string matching for the strings "mean ()" or "std ()", which left out variables containing the string "meanFreq". This could easily be changed, if desired.
+
+7.  Use the activity label table to turn the numbered code given in the original data files and tables into a description of the activity (ie, "walking" instead of "1"). **This is the first tidy data set.**
+
+8.  Use dplyr's group_by and summarize functions to create a second tidy data set with the average of each variable by activity and subject. **This is the second tidy data set.**
+
+9.  Use write.table to export this summarized tidy data set into the working directory.
+
+### Variables of the Two Tidy Data Sets
+
+Below is a table containing all the variables in the two tidy data set and their class within r. To understand their meaning, build it from the components in Table 1. For example, "tBodyAccJerkMag" means "the body acceleration jerk magnitude in the time domain."
+
+**Table 2. Tidy Variable Class**
+
+| Variable                | Class  |
+|-------------------------|--------|
+| subject                 | double |
+| activity                | factor |
+| tBodyAcc-mean()-X       | double |
+| tBodyAcc-mean()-Y       | double |
+| tBodyAcc-mean()-Z       | double |
+| tGravityAcc-mean()-X    | double |
+| tGravityAcc-mean()-Y    | double |
+| tGravityAcc-mean()-Z    | double |
+| tBodyAccJerk-mean()-X   | double |
+| tBodyAccJerk-mean()-Y   | double |
+| tBodyAccJerk-mean()-Z   | double |
+| tBodyGyro-mean()-X      | double |
+| tBodyGyro-mean()-Y      | double |
+| tBodyGyro-mean()-Z      | double |
+| tBodyGyroJerk-mean()-X  | double |
+| tBodyGyroJerk-mean()-Y  | double |
+| tBodyGyroJerk-mean()-Z  | double |
+| tBodyAccMag-mean()      | double |
+| tGravityAccMag-mean()   | double |
+| tBodyAccJerkMag-mean()  | double |
+| tBodyGyroMag-Mean()     | double |
+| tBodyGyroJerkMag-mean() | double |
+| fBodyAcc-mean()-X       | double |
+| fBodyAcc-mean()-Y       | double |
+| fBodyAcc-mean()-Z       | double |
+| fBodyAccJerk-mean()-X   | double |
+| fBodyAccJerk-mean()-Y   | double |
+| fBodyAccJerk-mean()-Z   | double |
+| fBodyGyro-mean()-X      | double |
+| fBodyGyro-mean()-Y      | double |
+| fBodyGyro-mean()-Z      | double |
+| fBodyAccMag-mean()      | double |
+| fBodyAccJerkMag-mean()  | double |
+| fBodyGyroMag-mean()     | double |
+| fBodyGyroJerkMag-mean() | double |
+| tBodyAcc-std()-X        | double |
+| tBodyAcc-std()-Y        | double |
+| tBodyAcc-std()-Z        | double |
+| tGravityAcc-std()-X     | double |
+| tGravityAcc-std()-Y     | double |
+| tGravityAcc-std()-Z     | double |
+| tBodyAccJerk-std()-X    | double |
+| tBodyAccJerk-std()-Y    | double |
+| tBodyAccJerk-std()-Z    | double |
+| tBodyGyro-std()-X       | double |
+| tBodyGyro-std()-Y       | double |
+| tBodyGyro-std()-Z       | double |
+| tBodyGyroJerk-std()-X   | double |
+| tBodyGyroJerk-std()-Y   | double |
+| tBodyGyroJerk-std()-Z   | double |
+| tBodyAccMag-std()       | double |
+| tGravityAccMag-std()    | double |
+| tBodyAccJerkMag-std()   | double |
+| tBodyGyroMag-std()      | double |
+| tBodyGyroJerkMag-std()  | double |
+| fBodyAcc-std()-X        | double |
+| fBodyAcc-std()-Y        | double |
+| fBodyAcc-std()-Z        | double |
+| fBodyAccJerk-std()-X    | double |
+| fBodyAccJerk-std()-Y    | double |
+| fBodyAccJerk-std()-Z    | double |
+| fBodyGyro-std()-X       | double |
+| fBodyGyro-std()-Y       | double |
+| fBodyGyro-std()-Z       | double |
+| fBodyAccMag-std()       | double |
+| fBodyAccJerkMag-std()   | double |
+| fBodyGyroMag-std()      | double |
+| fBodyGyroJerkMag-std()  | double |
+
+All the above variables are averaged across all time windows using the mean function in the second, summarized tidy data set.
+
+#### Units
+
+All acceleration (body and gravity) variables are in units of g, or meters per second squared. When derived with respect to time as in the jerk measurement, units become meters per second cubed. All gyroscope/angular velocity variables are in radians per second. When derived with respect to time as in the jerk measurement, units become radians per second squared. Fast Fourier Transforms have units that are the inverse of their time domain units.
+
+### Why is the Tidy Data Set Tidy?
+
+According to Wickham et al, ("R For Data Science", 2017), tidy data is data in which:
+
+-   Every variable is a column
+
+-   Every observation is a row
+
+-   Every value has its own cell
+
+This is true of the intermediaries created in the script, "testdf" and "traindf", of the first tidy data set, and also the second set.
+
+This repository also contains (three of) the four important things to have, mentioned in the tidy data lecture in week 1 of Getting and Cleaning Data:
+
+1.  A tidy data set
+
+2.  A code book describing each variable and its values in the tidy data set
+
+3.  An explicit recipe to go from #1 to #2
+
+It is also important that we added descriptive variable names, in the form of the "features" list, instead of leaving the column names as "V1", "V2", etc as it was given to us. The names are explained clearly in this code book and are human readable.
+
+The script is the instructions list, and it goes from "raw" data to tidy data clearly and without parameters. (I put raw in quotes because we don't use the raw inertial signals, and the data goes through a lot of pre-processing before it got to us.)
+
+For more information, visit the website for this data: <http://archive.ics.uci.edu/ml/datasets/Smartphone-Based+Recognition+of+Human+Activities+and+Postural+Transitions>
